@@ -12,7 +12,7 @@ async function geocoding(location) {
 
         const response = await (await fetch(api)).json();
 
-        loc = [response[0].lon, response[0].lat];
+        loc = [response[0].lat, response[0].lon];
     }
     catch (err) {
         document.querySelector('#content').textContent = 'Error reading location data';
@@ -22,6 +22,34 @@ async function geocoding(location) {
     return loc;
 }
 
+function parseForecastData(list) {
+    const data = []
+
+    return data;
+}
+
+async function getForecast(lat, lon) {
+    let data = []
+    try {
+        const api = cfg.forecastApi
+            .replace('{lat}', lat)
+            .replace('{lon}', lon)
+            .replace('{key}', cfg.key);
+
+        const response = await (await fetch(api)).json();
+
+        data = parseForecastData(response.list);
+
+        console.log(response);
+    }
+    catch (err) {
+        document.querySelector('#content').textContent = 'Error reading forecast data';
+        console.error(err);
+    }
+
+    return data;
+}
+
 async function setup() {
     try {
         const cfgFile = await fetch('../config.json');
@@ -29,7 +57,9 @@ async function setup() {
         if (cfgFile.status === 200) {
             cfg = await cfgFile.json();
 
-            const [lon, lat] = await geocoding(cfg.location);
+            const [lat, lon] = await geocoding(cfg.location);
+
+            const data = getForecast(lat, lon);
         }
     }
     catch (err) {
@@ -38,4 +68,15 @@ async function setup() {
     }
 }
 
-setup();
+async function test() {
+    const response = await (await fetch('../ignore/test.json')).json();
+
+    console.log(response);
+
+    const data = parseForecastData(response.list);
+
+    console.table(data);
+}
+
+//setup();
+test();
