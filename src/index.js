@@ -25,13 +25,9 @@ async function geocoding(location) {
     return loc;
 }
 
-function parseForecastData(response) {
+function setPrimaryData(object, response) {
+    const data = object;
 
-    console.log(response);
-
-    const data = {};
-
-    // Primary Data
     data.name = response.city.name;
     data.timeOffset = response.city.timezone;
     data.sunrise = response.city.sunrise;
@@ -43,6 +39,21 @@ function parseForecastData(response) {
 
     const weather = response.list[0].weather[0].description;
     data.weather = weather[0].toUpperCase() + weather.slice(1);
+
+    return data;
+}
+
+function calculateCondition(currentCondition, newCondition) {
+    let results = currentCondition;
+
+    return results;
+}
+
+function parseForecastData(response) {
+
+    const data = {};
+
+    setPrimaryData(data, response);
 
     // Forecast
     const forecastData = response.list;
@@ -76,7 +87,7 @@ function parseForecastData(response) {
             itemData.precipitation = precipitation;
 
             const status = new Weather(month, day, condition, icon, itemData);
-            list.append(status);
+            list.push(status);
 
             tempMin = 100;
             tempMax = -100;
@@ -99,6 +110,7 @@ function parseForecastData(response) {
         precipitation += item.pop;
 
         // Todo: calculate display of weather condition/icon
+
 
         count += 1;
         index += 1;
