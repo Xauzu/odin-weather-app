@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 import Weather from './weather';
 
 import './style.css'
@@ -5,7 +6,7 @@ import './style.css'
 let cfg;
 
 async function geocoding(location) {
-    const userLoc = location.replace(/\ /g, ",");
+    const userLoc = location.replace(/ /g, ",");
     let loc = []
     try {
         const api = cfg.geocodingApi
@@ -45,7 +46,7 @@ function parseForecastData(response) {
 
     // Forecast
     const forecastData = response.list;
-    let list = [];
+    const list = [];
 
     let index = 1;
 
@@ -55,6 +56,7 @@ function parseForecastData(response) {
     let icon = response.list[0].weather[0].icon;
     let humidity = response.list[0].main.humidity;
     let precipitation = response.list[0].pop;
+    let count = 1;
 
     let month = response.list[0].dt_txt.slice(5, 7);
     let day = response.list[0].dt_txt.slice(8, 10);
@@ -70,7 +72,7 @@ function parseForecastData(response) {
             const itemData = {};
             itemData.tempMin = tempMin;
             itemData.tempMax = tempMax;
-            itemData.humidity = humidity;
+            itemData.humidity = humidity / count;
             itemData.precipitation = precipitation;
 
             const status = new Weather(month, day, condition, icon, itemData);
@@ -83,13 +85,23 @@ function parseForecastData(response) {
             humidity = 0;
             precipitation = 0;
 
+            count = 0;
+
             // Set next
             month = itemMonth;
             day = itemDay;
         }
         
+        // Data update
+        if (item.main.temp_min < tempMin) tempMin = item.main.temp_min;
+        if (item.main.temp_max < tempMax) tempMax = item.main.temp_max;
+        humidity += item.main.humidity;
+        precipitation += item.pop;
 
-        index+= 1;
+        // Todo: calculate display of weather condition/icon
+
+        count += 1;
+        index += 1;
     }
 
     console.log(data);
@@ -138,6 +150,7 @@ async function setup() {
 }
 
 async function test() {
+
     const response = await (await fetch('../ignore/test.json')).json();
 
     const data = parseForecastData(response);
@@ -145,5 +158,5 @@ async function test() {
     // console.table(data);
 }
 
-//setup();
+// setup();
 test();
