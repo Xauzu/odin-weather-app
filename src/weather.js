@@ -1,22 +1,23 @@
-export default function weather(day, desc, icon, data) {
-	this.day = day;
+export default function Weather(month, day, desc, icon, data) {
+    this.month = month;
+    this.day = day;
     this.desc = desc;
     this.icon = icon;
-	this.data = data;
+	this.data = data; // min, max, humidity, precipitation
 }
 
-weather.prototype.getDay = function getDay() {
-    return this.day;
+Weather.prototype.getDate = function getDate() {
+    return this.date;
 }
 
-weather.prototype.getDescription = function getDescription() {
+Weather.prototype.getDescription = function getDescription() {
     return this.desc;
 }
 
-weather.prototype.icon = function icon() {
+Weather.prototype.icon = function icon() {
     return this.icon;
 }
 
-weather.prototype.getData = function getData() { 
+Weather.prototype.getData = function getData() { 
     return this.data;
 }

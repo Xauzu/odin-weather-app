@@ -1,3 +1,5 @@
+import Weather from './weather';
+
 import './style.css'
 
 let cfg;
@@ -22,8 +24,75 @@ async function geocoding(location) {
     return loc;
 }
 
-function parseForecastData(list) {
-    const data = []
+function parseForecastData(response) {
+
+    console.log(response);
+
+    const data = {};
+
+    // Primary Data
+    data.name = response.city.name;
+    data.timeOffset = response.city.timezone;
+    data.sunrise = response.city.sunrise;
+    data.sunset = response.city.sunset;
+    data.temp = response.list[0].main.temp;
+    data.humidity = response.list[0].main.humidity;
+    data.wind = response.list[0].wind.speed;
+    data.gust = response.list[0].wind.gust;
+
+    const weather = response.list[0].weather[0].description;
+    data.weather = weather[0].toUpperCase() + weather.slice(1);
+
+    // Forecast
+    const forecastData = response.list;
+    let list = [];
+
+    let index = 1;
+
+    let tempMin = response.list[0].main.temp_min;
+    let tempMax = response.list[0].main.temp_max;
+    let condition = response.list[0].weather[0].description;
+    let icon = response.list[0].weather[0].icon;
+    let humidity = response.list[0].main.humidity;
+    let precipitation = response.list[0].pop;
+
+    let month = response.list[0].dt_txt.slice(5, 7);
+    let day = response.list[0].dt_txt.slice(8, 10);
+
+    while (index < forecastData.length) {
+        const item = response.list[index];
+
+        const itemMonth = item.dt_txt.slice(5, 7);
+        const itemDay = item.dt_txt.slice(8, 10);
+
+        if (month !== itemMonth || day !== itemDay) {
+            // Create weather object and clean up
+            const itemData = {};
+            itemData.tempMin = tempMin;
+            itemData.tempMax = tempMax;
+            itemData.humidity = humidity;
+            itemData.precipitation = precipitation;
+
+            const status = new Weather(month, day, condition, icon, itemData);
+            list.append(status);
+
+            tempMin = 100;
+            tempMax = -100;
+            condition = '';
+            icon = '';
+            humidity = 0;
+            precipitation = 0;
+
+            // Set next
+            month = itemMonth;
+            day = itemDay;
+        }
+        
+
+        index+= 1;
+    }
+
+    console.log(data);
 
     return data;
 }
@@ -38,7 +107,7 @@ async function getForecast(lat, lon) {
 
         const response = await (await fetch(api)).json();
 
-        data = parseForecastData(response.list);
+        data = parseForecastData(response);
 
         console.log(response);
     }
@@ -71,11 +140,9 @@ async function setup() {
 async function test() {
     const response = await (await fetch('../ignore/test.json')).json();
 
-    console.log(response);
+    const data = parseForecastData(response);
 
-    const data = parseForecastData(response.list);
-
-    console.table(data);
+    // console.table(data);
 }
 
 //setup();
