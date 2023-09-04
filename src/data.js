@@ -21,15 +21,23 @@ export async function geocoding(location, cfg) {
     return loc;
 }
 
+function mpsToMph(mps) {
+    return (mps * 2.2369).toFixed(2);
+}
+
+function toF(c) {
+    return ((9/5)*c+32).toFixed(1);
+}
+
 export function setPrimaryData(object, response) {
     const data = object;
 
     data.name = response.city.name;
     data.timeOffset = response.city.timezone;
-    data.temp = response.list[0].main.temp;
+    data.temp = [response.list[0].main.temp, toF(response.list[0].main.temp)];
     data.humidity = response.list[0].main.humidity;
-    data.wind = response.list[0].wind.speed;
-    data.gust = response.list[0].wind.gust;
+    data.wind = [response.list[0].wind.speed, mpsToMph(response.list[0].wind.speed)];
+    data.gust = [response.list[0].wind.gust, mpsToMph(response.list[0].wind.gust)];
 
     data.image = response.list[0].weather[0].icon;
     const weather = response.list[0].weather[0].description;
@@ -126,8 +134,8 @@ export function parseForecastData(response) {
         if (month !== itemMonth || day !== itemDay) {
             // Create weather object and clean up
             const itemData = {};
-            itemData.tempMin = tempMin;
-            itemData.tempMax = tempMax;
+            itemData.tempMin = [tempMin, toF(tempMin)];
+            itemData.tempMax = [tempMax, toF(tempMax)];
             itemData.humidity = humidity / count;
             itemData.precipitation = precipitation;
 

@@ -1,6 +1,7 @@
 * {
     margin: 0px;
     padding: 0px;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 html, body {
@@ -11,6 +12,7 @@ html, body {
 #content {
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 #currentDisplay {
@@ -100,8 +102,23 @@ html, body {
 
 .itemDate, .itemDescription {
     font-size: larger;
+    text-align: center;
 }
 
 .itemDescription {
     margin-bottom: 1rem;
+}
+
+#unitButton {
+    position: absolute;
+    top: 1vh;
+    right: 1vw;
+    padding: 2%;
+    border-radius: 50%;
+    font-size: xx-large;
+    font-weight: bolder;
+}
+
+.itemUnitText {
+    font-size: larger;
 }

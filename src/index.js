@@ -9,14 +9,12 @@ import {geocoding, getForecast, parseForecastData } from './data';
 import './style.css'
 
 const displayUnits = [
-    ['C', 'm/s'],
-    ['F', 'mph']
+    ['°C', 'm/s'],
+    ['°F', 'mph']
 ]
 let style = 0; // 0 = metric, 1 = imperial
-let dateFormat = 0; // 0 = MM/DD, 1 = DD/MM
 let cfg;
-
-
+let currentData;
 
 function setupDisplay() {
     const content = document.querySelector('#content');
@@ -28,6 +26,17 @@ function setupDisplay() {
     const dailyDisplay = document.createElement('div');
     dailyDisplay.id = 'dailyDisplay';
     content.appendChild(dailyDisplay);
+
+    const unitButton = document.createElement('button');
+    unitButton.id = 'unitButton';
+    unitButton.textContent = displayUnits[style][0];
+    unitButton.addEventListener('click', function changeUnitStyle(){
+        style = +!(!!style);
+        unitButton.textContent = displayUnits[style][0];
+        clearDisplay();
+        displayWeatherData(currentData);
+    });
+    content.appendChild(unitButton);
 }
 
 function clearDisplay() {
@@ -70,7 +79,7 @@ function updateCurrentWeather(data) {
     // Temperature
     const temp = document.createElement('div');
     temp.classList.add('currentTemperature');
-    temp.textContent = `${data.temp}°${displayUnits[style][0]}`;
+    temp.textContent = `${(+data.temp[style]).toFixed(1)}${displayUnits[style][0]}`;
 
     currentLeft.appendChild(temp);
 
@@ -110,15 +119,15 @@ function updateCurrentWeather(data) {
     windSubDiv.classList.add('windSubDiv');
 
     const wind = document.createElement('div');
-    wind.textContent = `${data.wind} ${displayUnits[style][1]}`;
-    wind.title = `Wind speed: ${data.wind} ${displayUnits[style][1]}`;
+    wind.textContent = `${(+data.wind[style]).toFixed(1)} ${displayUnits[style][1]}`;
+    wind.title = `Wind speed: ${data.wind[style]} ${displayUnits[style][1]}`;
     wind.classList.add('currentStatText');
     windSubDiv.appendChild(wind);
 
     const gust = document.createElement('div');
     gust.classList.add('currentStatSubText');
-    gust.textContent = ` +${data.gust}`;
-    gust.title = `Gust: ${data.gust} ${displayUnits[style][1]}`;
+    gust.textContent = ` +${(+data.gust[style]).toFixed(1)}`;
+    gust.title = `Gust: ${data.gust[style]} ${displayUnits[style][1]}`;
     windSubDiv.appendChild(gust);
 
     windDiv.appendChild(windSubDiv);
@@ -139,14 +148,7 @@ function createDailyWeatherItem(data) {
     // Date
     const targetDate = document.createElement('div');
     targetDate.classList.add('itemDate');
-    if (dateFormat) {
-        // DD/MM
-        targetDate.textContent = `${data.day}/${data.month}`;
-    }
-    else {
-        // MM/DD
-        targetDate.textContent = `${data.month}/${data.day}`;
-    }
+    targetDate.textContent = `${data.month}/${data.day}`;
     dailyWeatherItem.appendChild(targetDate);
 
     // Description
@@ -169,15 +171,21 @@ function createDailyWeatherItem(data) {
 
     const maxTemp = document.createElement('div');
     maxTemp.classList.add('itemMaxTemp');
-    maxTemp.textContent = data.data.tempMax;
+    maxTemp.textContent = (+data.data.tempMax[style]).toFixed(1);
     tempSubDiv.appendChild(maxTemp);
 
     const minTemp = document.createElement('div');
     minTemp.classList.add('itemMinTemp');
-    minTemp.textContent = data.data.tempMin;
+    minTemp.textContent = (+data.data.tempMin[style]).toFixed(1);
     tempSubDiv.appendChild(minTemp);
 
     tempDiv.appendChild(tempSubDiv);
+
+    const tempUnit = document.createElement('div');
+    tempUnit.classList.add('itemUnitText');
+    tempUnit.textContent = displayUnits[style][0];
+    tempDiv.appendChild(tempUnit);
+
     dailyWeatherItem.appendChild(tempDiv);
 
     // Humidity
@@ -240,9 +248,9 @@ async function acquireWeatherData() {
 
             const [lat, lon] = await geocoding(cfg.location, cfg);
 
-            const data = await getForecast(lat, lon, cfg);
+            currentData = await getForecast(lat, lon, cfg);
 
-            displayWeatherData(data);
+            displayWeatherData(currentData);
         }
     }
     catch (err) {
@@ -255,9 +263,9 @@ async function test() {
 
     const response = await (await fetch('../ignore/test.json')).json();
 
-    const data = parseForecastData(response);
+    currentData = parseForecastData(response);
 
-    displayWeatherData(data);
+    displayWeatherData(currentData);
 }
 
 const doTest = 1;
