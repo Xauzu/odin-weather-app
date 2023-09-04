@@ -5,6 +5,7 @@
 
 html, body {
     width: 100%;
+    background-color: lightgrey;
 }
 
 #content {
@@ -17,7 +18,7 @@ html, body {
     background-color: lightgrey;
     align-items: center;
     justify-content: center;
-    padding: 10%;
+    padding: 5%;
 }
 
 .icon {
@@ -74,9 +75,9 @@ html, body {
 #dailyDisplay {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    width: 100%;
-    height: 40vh;
-    background-color: lightblue;
+    height: 30vh;
+    padding: 2vh 1vw;
+    gap: 1rem;
 }
 
 .itemHumidDiv, .itemTempDiv, .itemPrecipDiv {
@@ -93,6 +94,8 @@ html, body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    padding: 2vh 1vw;
+    background-color: lightblue;
 }
 
 .itemDate, .itemDescription {
