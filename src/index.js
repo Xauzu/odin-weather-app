@@ -189,6 +189,24 @@ async function getForecast(lat, lon) {
     return data;
 }
 
+function setupDisplay() {
+    const content = document.querySelector('#content');
+    
+    const currentDisplay = document.createElement('div');
+    currentDisplay.id = 'currentDisplay';
+    content.appendChild(currentDisplay);
+
+    const dailyDisplay = document.createElement('div');
+    dailyDisplay.id = 'dailyDisplay';
+    content.appendChild(dailyDisplay);
+}
+
+function clearDisplay() {
+    const content = document.querySelector('#content');
+    content.innerHTML = '';
+    setupDisplay();
+}
+
 function displayWeatherData(data) {
     console.log(data);
 }
@@ -222,5 +240,6 @@ async function test() {
 
 const doTest = 1;
 
+setupDisplay();
 if (doTest) test();
 else acquireWeatherData();
