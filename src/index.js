@@ -127,7 +127,6 @@ function updateCurrentWeather(data) {
 }
 
 function createDailyWeatherItem(data) {
-    console.log(data);
     const dailyWeatherItem = document.createElement('div');
     dailyWeatherItem.classList.add('dailyWeatherItem');
 
@@ -221,7 +220,6 @@ function createDailyWeatherItem(data) {
 }
 
 function updateDailyWeather(data) {
-    console.log(data);
     const dailyWeatherDiv = document.querySelector('#dailyDisplay');
     for (let i = 0; i < data.length; i++) {
         dailyWeatherDiv.appendChild(createDailyWeatherItem(data[i]));

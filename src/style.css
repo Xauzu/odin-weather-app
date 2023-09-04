@@ -92,8 +92,13 @@ html, body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
 }
 
-.itemDate, .itemDesc {
+.itemDate, .itemDescription {
+    font-size: larger;
+}
 
+.itemDescription {
+    margin-bottom: 1rem;
 }

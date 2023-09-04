@@ -149,9 +149,9 @@ export function parseForecastData(response) {
         
         // Data update
         if (item.main.temp_min < tempMin) tempMin = item.main.temp_min;
-        if (item.main.temp_max < tempMax) tempMax = item.main.temp_max;
+        if (item.main.temp_max > tempMax) tempMax = item.main.temp_max;
         humidity += item.main.humidity;
-        precipitation += item.pop;
+        if (item.pop > precipitation) precipitation = item.pop;
 
         const newCondition = [item.weather[0].id, item.weather[0].description, item.weather[0].icon];
         condition = calculateCondition(condition, newCondition);
