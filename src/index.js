@@ -180,8 +180,6 @@ async function getForecast(lat, lon) {
         const response = await (await fetch(api)).json();
 
         data = parseForecastData(response);
-
-        console.log(data);
     }
     catch (err) {
         document.querySelector('#content').textContent = 'Error reading forecast data';
@@ -191,7 +189,11 @@ async function getForecast(lat, lon) {
     return data;
 }
 
-async function setup() {
+function displayWeatherData(data) {
+    console.log(data);
+}
+
+async function acquireWeatherData() {
     try {
         const cfgFile = await fetch('../config.json');
 
@@ -200,7 +202,7 @@ async function setup() {
 
             const [lat, lon] = await geocoding(cfg.location);
 
-            const data = getForecast(lat, lon);
+            const data = await getForecast(lat, lon);
         }
     }
     catch (err) {
@@ -215,8 +217,10 @@ async function test() {
 
     const data = parseForecastData(response);
 
-    console.log(data);
+    displayWeatherData(data);
 }
 
-// setup();
-test();
+const doTest = 1;
+
+if (doTest) test();
+else acquireWeatherData();
