@@ -1,6 +1,8 @@
 /* eslint-disable prefer-destructuring */
 import humidityIcon from './humidity.png'; // https://thenounproject.com/icon/humidity-4212778/
 import windsIcon from './winds.png'; // https://thenounproject.com/icon/winds-503905/
+import tempIcon from './temp.png'; // https://thenounproject.com/icon/temperature-1979336/
+import precipIcon from './precip.png'; // https://thenounproject.com/icon/rainy-1640182/
 
 import {geocoding, getForecast, parseForecastData } from './data';
 
@@ -11,6 +13,7 @@ const displayUnits = [
     ['F', 'mph']
 ]
 let style = 0; // 0 = metric, 1 = imperial
+let dateFormat = 0; // 0 = MM/DD, 1 = DD/MM
 let cfg;
 
 
@@ -121,6 +124,108 @@ function updateCurrentWeather(data) {
     windDiv.appendChild(windSubDiv);
 
     currentRight.appendChild(windDiv);
+}
+
+function createDailyWeatherItem(data) {
+    console.log(data);
+    const dailyWeatherItem = document.createElement('div');
+    dailyWeatherItem.classList.add('dailyWeatherItem');
+
+    // Image
+    const weatherImage = document.createElement('img');
+    const imageLink = `https://openweathermap.org/img/wn/${data.icon}@2x.png`;
+    weatherImage.src = imageLink;
+    dailyWeatherItem.appendChild(weatherImage);
+
+    // Date
+    const targetDate = document.createElement('div');
+    targetDate.classList.add('itemDate');
+    if (dateFormat) {
+        // DD/MM
+        targetDate.textContent = `${data.day}/${data.month}`;
+    }
+    else {
+        // MM/DD
+        targetDate.textContent = `${data.month}/${data.day}`;
+    }
+    dailyWeatherItem.appendChild(targetDate);
+
+    // Description
+    const desc = document.createElement('div');
+    desc.classList.add('itemDescription');
+    desc.textContent = data.desc;
+    dailyWeatherItem.appendChild(desc);
+
+    // Temp
+    const tempDiv = document.createElement('div');
+    tempDiv.classList.add('itemTempDiv');
+
+    const tempImg = document.createElement('img');
+    tempImg.classList.add('itemTempIcon', 'icon');
+    tempImg.src = tempIcon; 
+    tempDiv.appendChild(tempImg);
+
+    const tempSubDiv = document.createElement('div');
+    tempSubDiv.classList.add('itemTempSubDiv');
+
+    const maxTemp = document.createElement('div');
+    maxTemp.classList.add('itemMaxTemp');
+    maxTemp.textContent = data.tempMax;
+    tempSubDiv.appendChild(maxTemp);
+
+    const minTemp = document.createElement('div');
+    minTemp.classList.add('itemMinTemp');
+    minTemp.textContent = data.tempMin;
+    tempSubDiv.appendChild(minTemp);
+
+    tempDiv.appendChild(tempSubDiv);
+    dailyWeatherItem.appendChild(tempDiv);
+
+    // Humidity
+    const humidDiv = document.createElement('div');
+    humidDiv.classList.add('itemHumidDiv');
+
+    const humidImg = document.createElement('img');
+    humidImg.classList.add('humidIcon', 'icon');
+    humidImg.src = humidityIcon;
+    humidImg.title = 'Humidity';
+    humidDiv.appendChild(humidImg);
+
+    const humid = document.createElement('div');
+    const humidVal = `${data.data.humidity}`.slice(0,2);
+    humid.textContent = `${humidVal}%`;
+    humid.classList.add('itemStatText');
+    humidDiv.appendChild(humid);
+
+    dailyWeatherItem.appendChild(humidDiv);
+
+    // Precipitation
+    const precipDiv = document.createElement('div');
+    precipDiv.classList.add('itemPrecipDiv');
+
+    const precipImg = document.createElement('img');
+    precipImg.classList.add('precipIcon', 'icon');
+    precipImg.src = precipIcon;
+    precipImg.title = 'Precipitation';
+    humidDiv.appendChild(precipImg);
+
+    const precip = document.createElement('div');
+    const precipVal = +data.data.precipitation * 100;
+    precip.textContent = `${precipVal}%`;
+    precip.classList.add('itemStatText');
+    precipDiv.appendChild(precip);
+
+    dailyWeatherItem.appendChild(precipDiv);
+
+    return dailyWeatherItem;
+}
+
+function updateDailyWeather(data) {
+    console.log(data);
+    const dailyWeatherDiv = document.querySelector('#dailyDisplay');
+    for (let i = 0; i < data.length; i++) {
+        dailyWeatherDiv.appendChild(createDailyWeatherItem(data[i]));
+    }
 }
 
 function displayWeatherData(data) {
