@@ -263,10 +263,11 @@ function updateCurrentWeather(data) {
     const humidIcon = document.createElement('img');
     humidIcon.classList.add('humidIcon', 'icon');
     humidIcon.src = humidityIcon;
+    humidIcon.title = 'Humidity';
     humidDiv.appendChild(humidIcon);
 
     const humid = document.createElement('div');
-    humid.text = data.humidity;
+    humid.textContent = `${data.humidity}%`;
     humid.classList.add('currentStatText');
     humidDiv.appendChild(humid);
 
@@ -279,23 +280,23 @@ function updateCurrentWeather(data) {
     const windIcon = document.createElement('img');
     windIcon.classList.add('windIcon', 'icon');
     windIcon.src = windsIcon;
+    windIcon.title = 'Wind';
     windDiv.appendChild(windIcon);
 
     const windSubDiv = document.createElement('div');
     windSubDiv.classList.add('windSubDiv');
 
     const wind = document.createElement('div');
-    wind.textContent = data.wind;
+    wind.textContent = `${data.wind} ${displayUnits[style][1]}`;
+    wind.title = `Wind speed: ${data.wind} ${displayUnits[style][1]}`;
     wind.classList.add('currentStatText');
     windSubDiv.appendChild(wind);
 
     const gust = document.createElement('div');
+    gust.classList.add('currentStatSubText');
     gust.textContent = ` +${data.gust}`;
+    gust.title = `Gust: ${data.gust} ${displayUnits[style][1]}`;
     windSubDiv.appendChild(gust);
-
-    const windUnits = document.createElement('div');
-    windUnits.textContent = `${displayUnits[style][1]}`;
-    windSubDiv.appendChild(windUnits);
 
     windDiv.appendChild(windSubDiv);
 

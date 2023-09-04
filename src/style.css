@@ -3,6 +3,10 @@
     padding: 0px;
 }
 
+html, body {
+    width: 100%;
+}
+
 #content {
     display: flex;
     flex-direction: column;
@@ -10,11 +14,10 @@
 
 #currentDisplay {
     display: flex;
-    width: 100%;
-    height: 60vh;
     background-color: lightgrey;
     align-items: center;
     justify-content: center;
+    padding: 10%;
 }
 
 #dailyDisplay {
@@ -25,12 +28,7 @@
 }
 
 .icon {
-    width: 100%;
-    height: 100%;
-}
-
-#currentWindDiv, #currentHumidDiv {
-    width: 4%;
+    width: 2rem;
 }
 
 #currentLeft, #currentRight {
@@ -38,11 +36,44 @@
     flex-direction: column;
 }
 
-#currentLeft {
-    flex: 1;
+#currentLeft, #currentWeatherDiv {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 #currentHumidDiv, #currentWindDiv, .windSubDiv {
     display: flex;
     align-items: center;
+}
+
+.windSubDiv {
+    gap: 0.5rem;
+}
+
+#currentHumidDiv > div, #currentWindDiv > div {
+    padding: 0.5rem;
+}
+
+.currentStatText, .currentStatSubText {
+    font-weight: bold;
+}
+
+.currentStatSubText {
+    font-size: small;
+}
+
+#currentWeatherDescription {
+    font-size: x-large;
+    font-weight: bolder;
+}
+
+#weatherLocation {
+    font-size: xx-large;
+    font-weight: bolder;
+}
+
+.currentTemperature {
+    font-size: x-large;
+    font-weight: bolder;
 }
