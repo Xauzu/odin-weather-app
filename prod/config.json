@@ -1,6 +1,6 @@
 {
-    "forecastApi": "http://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={key}&units=metric",
-    "geocodingApi": "http://api.openweathermap.org/geo/1.0/direct?q={location}&limit=1&appid={key}",
+    "forecastApi": "https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={key}&units=metric",
+    "geocodingApi": "https://api.openweathermap.org/geo/1.0/direct?q={location}&limit=1&appid={key}",
     "key": "fea98fb411fd34655ac8bb018f501b88",
     "location": "Brooklyn"
 }
