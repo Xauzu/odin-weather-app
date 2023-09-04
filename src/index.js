@@ -16,7 +16,18 @@ let style = 0; // 0 = metric, 1 = imperial
 let cfg;
 let currentData;
 
+async function setup() {
+    const cfgFile = await fetch('../config.json');
+
+    if (cfgFile.status === 200) {
+        cfg = await cfgFile.json();
+
+        setupDisplay();
+    }
+}
+
 function setupDisplay() {
+
     const content = document.querySelector('#content');
     
     const currentDisplay = document.createElement('div');
@@ -27,6 +38,20 @@ function setupDisplay() {
     dailyDisplay.id = 'dailyDisplay';
     content.appendChild(dailyDisplay);
 
+    const floatControls = document.createElement('div');
+    floatControls.id = 'floatControls';
+
+    const searchBar = document.createElement('input');
+    searchBar.id = 'searchBar';
+    searchBar.type = 'text';
+    searchBar.addEventListener('keydown', function search(e) {
+        if (e.code === 'Enter') {
+            clearDisplay();
+            searchLocation(searchBar.value.replace(', ', ','));
+        }
+    });
+    floatControls.appendChild(searchBar);
+
     const unitButton = document.createElement('button');
     unitButton.id = 'unitButton';
     unitButton.textContent = displayUnits[style][0];
@@ -36,7 +61,9 @@ function setupDisplay() {
         clearDisplay();
         displayWeatherData(currentData);
     });
-    content.appendChild(unitButton);
+    floatControls.appendChild(unitButton);
+
+    content.appendChild(floatControls);
 }
 
 function clearDisplay() {
@@ -99,7 +126,7 @@ function updateCurrentWeather(data) {
     humidDiv.appendChild(humidIcon);
 
     const humid = document.createElement('div');
-    humid.textContent = `${data.humidity}%`;
+    humid.textContent = `${(+data.humidity).toFixed(0)}%`;
     humid.classList.add('currentStatText');
     humidDiv.appendChild(humid);
 
@@ -200,7 +227,7 @@ function createDailyWeatherItem(data) {
 
     const humid = document.createElement('div');
     const humidVal = `${data.data.humidity}`.slice(0,2);
-    humid.textContent = `${humidVal}%`;
+    humid.textContent = `${(+humidVal).toFixed(0)}%`;
     humid.classList.add('itemStatText');
     humidDiv.appendChild(humid);
 
@@ -218,7 +245,7 @@ function createDailyWeatherItem(data) {
 
     const precip = document.createElement('div');
     const precipVal = +data.data.precipitation * 100;
-    precip.textContent = `${precipVal}%`;
+    precip.textContent = `${(+precipVal).toFixed(0)}%`;
     precip.classList.add('itemStatText');
     precipDiv.appendChild(precip);
 
@@ -239,19 +266,17 @@ function displayWeatherData(data) {
     updateDailyWeather(data.list);
 }
 
-async function acquireWeatherData() {
+async function searchLocation(location) {
+    const [lat, lon] = await geocoding(location, cfg);
+
+    currentData = await getForecast(lat, lon, cfg);
+
+    displayWeatherData(currentData);
+}
+
+function acquireWeatherData() {
     try {
-        const cfgFile = await fetch('../config.json');
-
-        if (cfgFile.status === 200) {
-            cfg = await cfgFile.json();
-
-            const [lat, lon] = await geocoding(cfg.location, cfg);
-
-            currentData = await getForecast(lat, lon, cfg);
-
-            displayWeatherData(currentData);
-        }
+        searchLocation(cfg.location);
     }
     catch (err) {
         document.querySelector('#content').textContent = 'Error loading configuration file';
@@ -270,6 +295,6 @@ async function test() {
 
 const doTest = 1;
 
-setupDisplay();
+setup();
 if (doTest) test();
 else acquireWeatherData();
