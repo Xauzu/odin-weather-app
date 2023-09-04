@@ -293,7 +293,7 @@ async function test() {
     displayWeatherData(currentData);
 }
 
-const doTest = 1;
+const doTest = 0;
 
 setup();
 if (doTest) test();

@@ -2,16 +2,15 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-    mode: 'development',
+    mode: 'production',
     entry: {
         index: './src/index.js'
     },
     output: {
         filename: 'script.js',
-            path: path.resolve(__dirname, 'dist'),
+            path: path.resolve(__dirname, 'prod'),
             clean: true,
     },
-    devtool: 'inline-source-map',
     plugins: [
         new HtmlWebpackPlugin({
             title: 'Weather App',
