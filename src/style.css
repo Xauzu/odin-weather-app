@@ -114,15 +114,23 @@ html, body {
     top: 1vh;
     left: 1vw;
     display: flex;
+    gap: 1vw;
+    width: calc(100% - 2vw);
 }
 
 #unitButton {
-    padding: 20%;
     border-radius: 50%;
-    font-size: xx-large;
+    font-size: x-large;
+    padding: 1%;
     font-weight: bolder;
 }
 
 .itemUnitText {
     font-size: larger;
+}
+
+#searchBar {
+    flex: 1;
+    font-size: large;
+    padding: 1rem;
 }
