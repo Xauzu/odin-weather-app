@@ -1,8 +1,15 @@
 /* eslint-disable prefer-destructuring */
+import humidityIcon from './humidity.png'; // https://thenounproject.com/icon/humidity-4212778/
+import windsIcon from './winds.png'; // https://thenounproject.com/icon/winds-503905/
 import Weather from './weather';
 
 import './style.css'
 
+const displayUnits = [
+    ['C', 'm/s'],
+    ['F', 'mph']
+]
+let style = 0; // 0 = metric, 1 = imperial
 let cfg;
 
 async function geocoding(location) {
@@ -30,13 +37,12 @@ function setPrimaryData(object, response) {
 
     data.name = response.city.name;
     data.timeOffset = response.city.timezone;
-    data.sunrise = response.city.sunrise;
-    data.sunset = response.city.sunset;
     data.temp = response.list[0].main.temp;
     data.humidity = response.list[0].main.humidity;
     data.wind = response.list[0].wind.speed;
     data.gust = response.list[0].wind.gust;
 
+    data.image = response.list[0].weather[0].icon;
     const weather = response.list[0].weather[0].description;
     data.weather = weather[0].toUpperCase() + weather.slice(1);
 
@@ -207,7 +213,97 @@ function clearDisplay() {
     setupDisplay();
 }
 
+function updateCurrentWeather(data) {
+    const currentWeather = document.querySelector('#currentDisplay');
+
+    // -- Left Side --
+    const currentLeft = document.createElement('div');
+    currentLeft.id = 'currentLeft';
+    currentWeather.appendChild(currentLeft);
+
+    // Weather
+    const weatherDiv = document.createElement('div');
+    weatherDiv.id = 'currentWeatherDiv';
+
+    const weatherImage = document.createElement('img');
+    const imageLink = `https://openweathermap.org/img/wn/${data.image}@4x.png`;
+    weatherImage.src = imageLink;
+    weatherDiv.appendChild(weatherImage);
+
+    const weatherDesc = document.createElement('div');
+    weatherDesc.id = 'currentWeatherDescription';
+    weatherDesc.textContent = data.weather;
+    weatherDiv.appendChild(weatherDesc);
+
+    currentLeft.appendChild(weatherDiv);
+
+    // Location
+    const loc = document.createElement('div');
+    loc.id = 'weatherLocation';
+    loc.textContent = data.name;
+
+    currentLeft.appendChild(loc);
+
+    // Temperature
+    const temp = document.createElement('div');
+    temp.classList.add('currentTemperature');
+    temp.textContent = `${data.temp}°${displayUnits[style][0]}`;
+
+    currentLeft.appendChild(temp);
+
+    // -- Right Side --
+    const currentRight = document.createElement('div');
+    currentRight.id = 'currentRight';
+    currentWeather.appendChild(currentRight);
+
+    // Humidity
+    const humidDiv = document.createElement('div');
+    humidDiv.id = 'currentHumidDiv';
+
+    const humidIcon = document.createElement('img');
+    humidIcon.classList.add('humidIcon', 'icon');
+    humidIcon.src = humidityIcon;
+    humidDiv.appendChild(humidIcon);
+
+    const humid = document.createElement('div');
+    humid.text = data.humidity;
+    humid.classList.add('currentStatText');
+    humidDiv.appendChild(humid);
+
+    currentRight.appendChild(humidDiv);
+
+    // Wind
+    const windDiv = document.createElement('div');
+    windDiv.id = 'currentWindDiv';
+    
+    const windIcon = document.createElement('img');
+    windIcon.classList.add('windIcon', 'icon');
+    windIcon.src = windsIcon;
+    windDiv.appendChild(windIcon);
+
+    const windSubDiv = document.createElement('div');
+    windSubDiv.classList.add('windSubDiv');
+
+    const wind = document.createElement('div');
+    wind.textContent = data.wind;
+    wind.classList.add('currentStatText');
+    windSubDiv.appendChild(wind);
+
+    const gust = document.createElement('div');
+    gust.textContent = ` +${data.gust}`;
+    windSubDiv.appendChild(gust);
+
+    const windUnits = document.createElement('div');
+    windUnits.textContent = `${displayUnits[style][1]}`;
+    windSubDiv.appendChild(windUnits);
+
+    windDiv.appendChild(windSubDiv);
+
+    currentRight.appendChild(windDiv);
+}
+
 function displayWeatherData(data) {
+    updateCurrentWeather(data);
     console.log(data);
 }
 
