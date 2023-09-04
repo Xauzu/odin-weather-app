@@ -170,12 +170,12 @@ function createDailyWeatherItem(data) {
 
     const maxTemp = document.createElement('div');
     maxTemp.classList.add('itemMaxTemp');
-    maxTemp.textContent = data.tempMax;
+    maxTemp.textContent = data.data.tempMax;
     tempSubDiv.appendChild(maxTemp);
 
     const minTemp = document.createElement('div');
     minTemp.classList.add('itemMinTemp');
-    minTemp.textContent = data.tempMin;
+    minTemp.textContent = data.data.tempMin;
     tempSubDiv.appendChild(minTemp);
 
     tempDiv.appendChild(tempSubDiv);
@@ -207,7 +207,7 @@ function createDailyWeatherItem(data) {
     precipImg.classList.add('precipIcon', 'icon');
     precipImg.src = precipIcon;
     precipImg.title = 'Precipitation';
-    humidDiv.appendChild(precipImg);
+    precipDiv.appendChild(precipImg);
 
     const precip = document.createElement('div');
     const precipVal = +data.data.precipitation * 100;
