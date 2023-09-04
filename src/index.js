@@ -16,20 +16,18 @@ let style = 0; // 0 = metric, 1 = imperial
 let cfg;
 let currentData;
 
-async function setup() {
-    const cfgFile = await fetch('../config.json');
-    if (cfgFile.status === 200) {
-        cfg = await cfgFile.json();
+async function setup(path) {
+    try {
+        const cfgFile = await fetch(path, {mode: "cors"});
+        if (cfgFile.status === 200) {
+            cfg = await cfgFile.json();
+            console.log(cfg);
 
-        setupDisplay();
-    }
-    else {
-        const cfgFile2 = await fetch('./config.json');
-        if (cfgFile2.status === 200) {
-            cfg = await cfgFile2.json();
-    
             setupDisplay();
         }
+    }
+    catch (err){
+        console.error(err);
     }
 }
 
@@ -283,7 +281,8 @@ async function searchLocation(location) {
 
 function acquireWeatherData() {
     try {
-        searchLocation(cfg.location || 'New York');
+        const searchPath = cfg.location || 'New York';
+        searchLocation(searchPath);
     }
     catch (err) {
         document.querySelector('#content').textContent = 'Error loading configuration file';
@@ -302,6 +301,11 @@ async function test() {
 
 const doTest = 0;
 
-setup();
+const init = await setup('../config.json');
+console.log(init);
+if (!init) {
+    await setup('./config.json');
+}
+
 if (doTest) test();
 else acquireWeatherData();
