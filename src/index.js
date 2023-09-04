@@ -18,11 +18,18 @@ let currentData;
 
 async function setup() {
     const cfgFile = await fetch('../config.json');
-
     if (cfgFile.status === 200) {
         cfg = await cfgFile.json();
 
         setupDisplay();
+    }
+    else {
+        const cfgFile2 = await fetch('./config.json');
+        if (cfgFile2.status === 200) {
+            cfg = await cfgFile2.json();
+    
+            setupDisplay();
+        }
     }
 }
 
@@ -276,7 +283,7 @@ async function searchLocation(location) {
 
 function acquireWeatherData() {
     try {
-        searchLocation(cfg.location);
+        searchLocation(cfg.location || 'New York');
     }
     catch (err) {
         document.querySelector('#content').textContent = 'Error loading configuration file';
